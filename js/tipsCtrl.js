@@ -3,6 +3,8 @@ var tipsController = function ($scope) {
   $scope.KRYSS = 2;
   $scope.TVA = 4;
 
+  $scope.CORRECT_LIST_COUNT = 4;
+
   $scope.results = [
     $scope.ETT,
     $scope.ETT,
@@ -55,7 +57,11 @@ var tipsController = function ($scope) {
       return '2';
   };
 
-  $scope.checked = function(index, constant) {
+  $scope.resultat = function(index, constant) {
+    return $scope.results[index] & constant;
+  };
+
+  $scope.har_vi_med_den = function(index, constant) {
     return $scope.rows[index] & constant;
   };
 
@@ -126,7 +132,14 @@ var tipsController = function ($scope) {
       }
       correct_rows[sum] += 1;
     }
+    correct_rows.reverse();
     return correct_rows;
+    return correct_rows.slice(13 - $scope.CORRECT_LIST_COUNT);
+  };
+
+
+  $scope.correct = function(index) {
+    return $scope.results[index] & $scope.rows[index];
   };
 
 

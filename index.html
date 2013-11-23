@@ -3,57 +3,86 @@
   <head>
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
-    <script src="/js/tipsCtrl.js""></script>
+    <script src="js/tipsCtrl.js""></script>
     <style>
-      #result {
-        float: left;
-      }
-      #info {
-        float: left;
-      }
-      #rows {
-        float: left;
+      html, body, h1, h2, div, span, li {
+        font-family: 'Lucida Grande'
       }
 
-      .visible {
+      ul {
+        padding: 0;
+        margin: 0;
+      }
+
+      h2 {
+        text-align: center;
+      }
+      .col {
+        float: left;
+        margin-right: 30px;
+      }
+      li {
+        list-style: none;
+      }
+      .box {
+        float: left;
+        width: 40px;
+        height: 20px;
+        border: 1px solid black;
+        text-align: center;
+        cursor: pointer;
+        -webkit-user-select: none;
+      }
+      #info {
+        clear: both;
+      }
+
+      .match-no {
+        margin-right: 10px;
+      }
+
+      .invisible {
         color: #fff;
       }
+
+/*      .correct .box {
+        background: green;
+      }*/
     </style>
   </head>
   <body>
     <div ng-controller="tipsController">
-      <ul id="result">
+      <ul id="result" class="col">
+        <h2>Resultat</h2>
         <li ng-repeat="result in results track by $index">
-          <span>{{$index + 1}}</span>
-          <button ng-click="update_result($index, ETT)">1</button>
-          <button ng-click="update_result($index, KRYSS)">X</button>
-          <button ng-click="update_result($index, TVA)">2</button>
-           {{num_to_letter(result)}}
+          <div class="box match-no">{{$index + 1}}</div>
+          <div class="box" ng-click="update_result($index, ETT)" ng-class="{invisible: !resultat($index, ETT)}">1</div>
+          <div class="box" ng-click="update_result($index, KRYSS)" ng-class="{invisible: !resultat($index, KRYSS)}">X</div>
+          <div class="box" ng-click="update_result($index, TVA)" ng-class="{invisible: !resultat($index, TVA)}">2</div>
         </li>
       </ul>
 
-      <div id="info">
-        <button ng-click="save()">Save</button>
-        <button ng-click="load()">Load</button>
-        <button ng-click="extract_rows()">Extract rows</button>
+
+      <ul id="rows" class="col">
+        <h2>Din rad</h2>
+        <li ng-repeat="row in rows track by $index" ng-class="{correct: correct($index)}">
+          <div class="box match-no">{{$index + 1}}</div>
+          <div ng-click="toggle_row($index, ETT)" class="box" ng-class="{invisible: !har_vi_med_den($index, ETT)}">1</div>
+          <div ng-click="toggle_row($index, KRYSS)" class="box" ng-class="{invisible: !har_vi_med_den($index, KRYSS)}">X</div>
+          <div ng-click="toggle_row($index, TVA)" class="box" ng-class="{invisible: !har_vi_med_den($index, TVA)}">2</div>
+        </li>
+      </ul>
+      <div id="info" class="col">
+        <h2>Vinst</h2>
         <ul>
           <li ng-repeat="correct in correct_rows() track by $index">
-            {{$index}} rätt: {{correct}} rader
+            {{13 - $index}} rätt: {{correct}} rader
           </li>
         </ul>
+        <p>Totalt: {{extract_rows().length}} rader</p>
       </div>
-
-      <ul id="rows">
-        <li ng-repeat="row in rows track by $index">
-          <span>{{$index + 1}}</span>
-          <button ng-click="toggle_row($index, ETT)">1</button>
-          <button ng-click="toggle_row($index, KRYSS)">X</button>
-          <button ng-click="toggle_row($index, TVA)">2</button>
-          <span ng-show="checked($index, ETT)">1</span>
-          <span ng-show="checked($index, KRYSS)">X</span>
-          <span ng-show="checked($index, TVA)">2</span>
-        </li>
-      </ul>
+      <button ng-click="save()">Save</button>
+      <button ng-click="load()">Load</button>
     </div>
   </body>
 </html>
