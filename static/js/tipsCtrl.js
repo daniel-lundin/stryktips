@@ -106,7 +106,6 @@ var tipsController = function ($scope, $http) {
   };
 
   function update_results() {
-    console.log('updating');
     $http.get('/results.json').success(function(data) {
       $scope.team_names = [];
       $scope.team_scores = [];
@@ -127,6 +126,6 @@ var tipsController = function ($scope, $http) {
   }
 
   update_results();
-  setTimeout(update_results, 5000);
+  setInterval(update_results, 5000);
 
 };
