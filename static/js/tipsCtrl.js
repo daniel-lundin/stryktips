@@ -17,6 +17,7 @@ var tipsController = function ($scope, $http) {
     else
       $scope.rows[index] |= value;
     calculate_correct_rows();
+    update_hash();
   };
 
   $scope.is_good = function(index) {
@@ -105,6 +106,28 @@ var tipsController = function ($scope, $http) {
     });
   };
 
+  var update_hash = function() {
+    var s = "";
+    for(var i in $scope.rows) {
+      s += $scope.rows[i];
+    }
+    document.location.hash = s;
+  }
+
+  var read_from_hash = function() {
+    var hash = document.location.hash;
+    console.log(hash);
+    console.log(hash.length);
+    if(hash.length == 14) {
+      for(var i in document.location.hash) {
+        if(i == 0)
+          continue;
+        $scope.rows[i] = parseInt(document.location.hash[i]);
+      }
+      console.log('it is 13');
+    }
+  }
+
   function update_results() {
     $http.get('/results.json').success(function(data) {
       $scope.team_names = [];
@@ -126,6 +149,7 @@ var tipsController = function ($scope, $http) {
   }
 
   update_results();
+  read_from_hash();
   setInterval(update_results, 5000);
 
 };
