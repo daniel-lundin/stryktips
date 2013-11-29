@@ -1,8 +1,10 @@
 <!doctype html>
 <html ng-app>
   <head>
-    <meta charset="utf-8">
+     <meta charset="utf-8">
+     <meta name="viewport" content="initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+    <script src="/static/js/rows.js""></script>
     <script src="/static/js/tipsCtrl.js""></script>
     <style>
       html, body, h1, h2, div, span, li {
@@ -18,6 +20,7 @@
       }
 
       h1 {
+        margin-left: 20px;
       }
 
       .col {
@@ -50,9 +53,6 @@
       }
       .check-cell {
         width: 32px;
-        border-left: 1px solid black;
-        border-bottom: 1px solid black;
-        border: 1px solid black;
         margin: 2px;
       }
       .check-cell div {
@@ -64,6 +64,17 @@
       }
       table {
         border-spacing: 0px;
+      }
+      .check-cell div {
+        padding: 2px;
+        background: rgb(197, 197, 197);
+        text-align: center;
+        height: 30px;
+        padding-top: 10px;
+        cursor: pointer;
+      }
+      .check-cell .checked  {
+        background: rgb(0, 197, 0);
       }
       /*table tr:nth-child(odd) .filled {
         background: rgba(228, 255, 170, 0.43);
@@ -80,25 +91,27 @@
 
       <table class="col">
 
+        <tr>
+          <th colspan="3"></th>
+          <th colspan="3">Din rad<th>
+        </tr>
         <tr ng-repeat="i in [0,1,2,3,4,5,6,7,8,9,10,11,12]">
           <th class="filled">{{i+1}}.</th>
           <td class="filled">{{team_names[i]}}</td>
           <td class="score filled">{{team_scores[i]}}</td>
 
           <td ng-click="toggle_row(i, ETT)" class="check-cell filled">
-            <div ng-show="har_vi_med_den(i, ETT)">1</div>
-            </td>
-            <td ng-click="toggle_row(i, KRYSS)" class="check-cell filled">
-              <div ng-show="har_vi_med_den(i, KRYSS)">X</div>
-            </td>
-            <td ng-click="toggle_row(i, TVA)" class="check-cell filled">
-              <div ng-show="har_vi_med_den(i, TVA)">2</div>
-            </td>
-            <!--
-            <td>
-              <span ng-show="is_good(i)" class="check">Y</span>
-            </td>
-            -->
+            <div ng-class="{checked: har_vi_med_den(i, ETT)}">1</div>
+          </td>
+          <td ng-click="toggle_row(i, KRYSS)" class="check-cell filled">
+            <div ng-class="{checked: har_vi_med_den(i, KRYSS)}">X</div>
+          </td>
+          <td ng-click="toggle_row(i, TVA)" class="check-cell filled">
+            <div ng-class="{checked: har_vi_med_den(i, TVA)}">2</div>
+          </td>
+          <td>
+            <span ng-show="is_good(i)" class="check">✓</span>
+          </td>
         </tr>
       </table>
       

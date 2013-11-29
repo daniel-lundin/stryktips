@@ -36,6 +36,7 @@ Row.extract_rows = function(row) {
   return rows;
 };
 
+/*
 row = [ Row.ETT | Row.KRYSS | Row.TVA,
     Row.ETT | Row.KRYSS | Row.TVA,
     Row.ETT | Row.KRYSS | Row.TVA,
@@ -53,3 +54,4 @@ row = [ Row.ETT | Row.KRYSS | Row.TVA,
 
 rows = Row.extract_rows(row);
 console.log(rows.length);
+*/

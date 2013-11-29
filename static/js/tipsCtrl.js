@@ -11,10 +11,6 @@ var tipsController = function ($scope, $http) {
 
   $scope.rows = [ $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT ]; 
 
-  $scope.update_result = function(index, value) {
-    $scope.results[index] = value;
-  };
-
   $scope.toggle_row = function(index, value) {
     if($scope.rows[index] & value)
       $scope.rows[index] &= ~value;
@@ -24,8 +20,6 @@ var tipsController = function ($scope, $http) {
   };
 
   $scope.is_good = function(index) {
-    console.log(index);
-    console.log($scope.results);
     return $scope.har_vi_med_den(index, $scope.results[index]);
   }
   $scope.resultat = function(index, constant) {
@@ -35,7 +29,6 @@ var tipsController = function ($scope, $http) {
   $scope.har_vi_med_den = function(index, constant) {
     return $scope.rows[index] & constant;
   };
-
 
   $scope._extract_rows = function(index, row, rows) {
     if(index == 13) {
@@ -63,14 +56,10 @@ var tipsController = function ($scope, $http) {
   };
 
   $scope.extract_rows = function() {
-    var rows = [];
-    var start_row = [];
-    $scope._extract_rows(0, start_row, rows);
-    return rows;
+    return Row.extract_rows($scope.rows);
   };
 
   var calculate_correct_rows = function() {
-    console.log('calcing rows');
     var rows = $scope.extract_rows();
     var correct_rows = Array(14);
     for(var i=0;i<14;++i)
@@ -96,23 +85,7 @@ var tipsController = function ($scope, $http) {
     return $scope.results[index] & $scope.rows[index];
   };
 
-  $http.get('/results.json').success(function(data) {
-    $scope.team_names = [];
-    $scope.team_scores = [];
-    $scope.results = [];
-    for(var i in data) {
-      $scope.team_names.push(data[i].home_team + '-' + data[i].away_team);
-      $scope.team_scores.push(data[i].home_score + '-' + data[i].away_score);
-      var result = $scope.KRYSS;
-      if(data[i].home_score > data[i].away_score) {
-        result = $scope.ETT;
-      } else if(data[i].home_score < data[i].away_score) {
-        result = $scope.TVA;
-      }
-      $scope.results.push(result);
-      calculate_correct_rows();
-    }
-  });
+
 
   $scope.save = function() {
     window.localStorage.clear();
@@ -131,5 +104,29 @@ var tipsController = function ($scope, $http) {
       $scope.results.push(parseInt(a, 10));
     });
   };
+
+  function update_results() {
+    console.log('updating');
+    $http.get('/results.json').success(function(data) {
+      $scope.team_names = [];
+      $scope.team_scores = [];
+      $scope.results = [];
+      for(var i in data) {
+        $scope.team_names.push(data[i].home_team + '-' + data[i].away_team);
+        $scope.team_scores.push(data[i].home_score + '-' + data[i].away_score);
+        var result = $scope.KRYSS;
+        if(data[i].home_score > data[i].away_score) {
+          result = $scope.ETT;
+        } else if(data[i].home_score < data[i].away_score) {
+          result = $scope.TVA;
+        }
+        $scope.results.push(result);
+        calculate_correct_rows();
+      }
+    });
+  }
+
+  update_results();
+  setTimeout(update_results, 5000);
 
 };
