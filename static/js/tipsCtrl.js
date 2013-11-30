@@ -112,7 +112,7 @@ var tipsController = function ($scope, $http) {
       s += $scope.rows[i];
     }
     document.location.hash = s;
-  }
+  };
 
   var read_from_hash = function() {
     var hash = document.location.hash;
@@ -122,11 +122,11 @@ var tipsController = function ($scope, $http) {
       for(var i in document.location.hash) {
         if(i == 0)
           continue;
-        $scope.rows[i] = parseInt(document.location.hash[i]);
+        $scope.rows[i-1] = parseInt(document.location.hash[i]);
       }
       console.log('it is 13');
     }
-  }
+  };
 
   function update_results() {
     $http.get('/results.json').success(function(data) {

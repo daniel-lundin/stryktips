@@ -16,7 +16,7 @@ AWAY_SCORE_START = 27
 
 
 def read_fixture():
-    with open('fixtures/beforegame.html') as f:
+    with open('fixtures/ongoing.html') as f:
         return f.read()
 
 
@@ -48,8 +48,8 @@ def extract_line(line, completed):
     home_score = 0
     away_score = 0
     if completed:
-        home_score = line[AWAY_SCORE_START:AWAY_SCORE_START + 1]
-        away_score = line[HOME_SCORE_START:HOME_SCORE_START + 1]
+        home_score = line[HOME_SCORE_START:HOME_SCORE_START + 1]
+        away_score = line[AWAY_SCORE_START:AWAY_SCORE_START + 1]
     status = STATUS_COMPLETED if completed else STATUS_WAITING
     return Row(game_no,
                home_team.rstrip(),
@@ -76,7 +76,11 @@ def parse_svttext(html):
     # Waiting lines
     waiting_lines = [content_waiting[x:x + line_length] for x in
                      range(0, len(content_waiting), line_length)]
-    l1 = [extract_line(l, False) for l in waiting_lines]
+    for l in waiting_lines[:13]:
+        print l
+    for l in completed_lines[:13]:
+        print l
+    l1 = [extract_line(l, True) for l in waiting_lines[:13]]
     l2 = [extract_line(l, True) for l in completed_lines]
     return sorted(l1 + l2, key=lambda x: x.game_no)
 
@@ -84,4 +88,5 @@ def parse_svttext(html):
 if __name__ == '__main__':
     html = read_fixture()
 
-    print parse_svttext(html)
+    for l in parse_svttext(html):
+        print l
