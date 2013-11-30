@@ -26,7 +26,8 @@ class ResultsHandler(tornado.web.RequestHandler):
                     'home_team': row.home_team,
                     'away_team': row.away_team,
                     'home_score': row.home_score,
-                    'away_score': row.away_score
+                    'away_score': row.away_score,
+                    'status': row.status
                 })
             self.write(json.dumps(res))
             self.finish()
