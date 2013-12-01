@@ -43,6 +43,9 @@
       .match-no {
         margin-right: 10px;
       }
+      .strong {
+        font-weight: bold;
+      }
 
       .team-name {
         width: 230px;
@@ -128,8 +131,9 @@
           <h2>Utdelning</h2>
           <ul>
             <li ng-repeat="i in [13, 12 ,11, 10]">
-              {{i}} rätt: N/A
+              {{i}} rätt: {{utdelning[i]}} kr
             </li>
+            <span class="strong">Total vinst: {{winnings}} kr</span>
           </ul>
         </div>
       </div>

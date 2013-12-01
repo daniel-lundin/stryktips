@@ -6,7 +6,7 @@ import tornado.httpclient
 import os.path
 import json
 
-from scrap import parse_svttext
+from svttext import parse_svttext
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -19,21 +19,23 @@ class ResultsHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         def response_handler(response):
-            rows = parse_svttext(response.body)
-            res = []
+            rows, utdelning = parse_svttext(response.body)
+            res = {'rows': [], 'utdelning': {}}
             for row in rows:
-                res.append({
+                res['rows'].append({
                     'home_team': row.home_team,
                     'away_team': row.away_team,
                     'home_score': row.home_score,
-                    'away_score': row.away_score,
-                    'status': row.status
+                    'away_score': row.away_score
                 })
+            for ratt, price in utdelning:
+                res['utdelning'][ratt] = price
+
             self.write(json.dumps(res))
             self.finish()
 
         http_client = tornado.httpclient.AsyncHTTPClient()
-        http_client.fetch("http://www.svt.se/svttext/web/pages/551.html",
+        http_client.fetch("http://www.svt.se/svttext/webu/pages/551.html",
                           response_handler)
 
 

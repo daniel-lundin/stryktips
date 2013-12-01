@@ -8,8 +8,10 @@ var tipsController = function ($scope, $http) {
   $scope.team_names = [ "", "", "", "", "", "", "", "", "", "", "", "", "" ];
   $scope.team_scores = [ "", "", "", "", "", "", "", "", "", "", "", "", "" ];
   $scope.results = [ $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT]; 
+  $scope.utdelning = {13: 0, 12: 0, 11: 0, 10: 0};
 
   $scope.rows = [ $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT ]; 
+  $scope.winnings = 0;
 
   $scope.toggle_row = function(index, value) {
     if($scope.rows[index] & value)
@@ -77,8 +79,16 @@ var tipsController = function ($scope, $http) {
     }
     correct_rows.reverse();
     $scope.correct_rows = correct_rows;
-    return correct_rows;
-    return correct_rows.slice(13 - $scope.CORRECT_LIST_COUNT);
+    console.log('correct rows: ' + correct_rows);
+    console.log('utdelning: ' + $scope.utdelning);
+    var winnings = 0;
+    for(i=10;i<14;++i) {
+      console.log('i is ' + i);
+      console.log('correct_rows: ' + $scope.correct_rows[13-i]);
+      console.log('utdelning: '  + $scope.utdelning[i]);
+      winnings += $scope.correct_rows[13-i] * $scope.utdelning[i];
+    }
+    $scope.winnings = winnings;
   };
 
 
@@ -133,18 +143,24 @@ var tipsController = function ($scope, $http) {
       $scope.team_names = [];
       $scope.team_scores = [];
       $scope.results = [];
-      for(var i in data) {
-        $scope.team_names.push(data[i].home_team + '-' + data[i].away_team);
-        $scope.team_scores.push(data[i].home_score + '-' + data[i].away_score);
+      for(var i in data.rows) {
+        $scope.team_names.push(data.rows[i].home_team + '-' + data.rows[i].away_team);
+        $scope.team_scores.push(data.rows[i].home_score + '-' + data.rows[i].away_score);
         var result = $scope.KRYSS;
-        if(data[i].home_score > data[i].away_score) {
+        if(data.rows[i].home_score > data.rows[i].away_score) {
           result = $scope.ETT;
-        } else if(data[i].home_score < data[i].away_score) {
+        } else if(data.rows[i].home_score < data.rows[i].away_score) {
           result = $scope.TVA;
         }
         $scope.results.push(result);
-        calculate_correct_rows();
       }
+      console.log('data.utdelning: ' + data.utdelning);
+      $scope.utdelning = data.utdelning;
+      console.log('scope.utdelning[10]: ' + $scope.utdelning[10]);
+      console.log('scope.utdelning[11]: ' + $scope.utdelning[11]);
+      console.log('scope.utdelning[12]: ' + $scope.utdelning[12]);
+      console.log('scope.utdelning[13]: ' + $scope.utdelning[13]);
+      calculate_correct_rows();
     });
   }
 
