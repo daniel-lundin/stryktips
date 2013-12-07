@@ -36,22 +36,57 @@ Row.extract_rows = function(row) {
   return rows;
 };
 
-/*
-row = [ Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA,
-    Row.ETT | Row.KRYSS | Row.TVA
+Row.num_rows = function(row) {
+  var halves = 0;
+  var fulles = 0;
+  for(var i in row) {
+    if(row[i] == 3 || row[i] == 5 || row[i] == 6)
+      halves += 1;
+    if(row[i] == 7)
+      fulles += 1;
+  };
+  return 1 * Math.pow(2, halves) * Math.pow(3, fulles);
+};
+
+row_full = [ 
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT | Row.KRYSS | Row.TVA
 ];
 
-rows = Row.extract_rows(row);
-console.log(rows.length);
-*/
+row96 = [ 
+  Row.ETT | Row.KRYSS,
+  Row.ETT | Row.KRYSS,
+  Row.ETT | Row.KRYSS,
+  Row.ETT | Row.KRYSS,
+  Row.ETT | Row.KRYSS,
+  Row.ETT | Row.KRYSS | Row.TVA,
+  Row.ETT,
+  Row.ETT,
+  Row.ETT,
+  Row.ETT,
+  Row.ETT,
+  Row.ETT,
+  Row.ETT
+];
+
+
+console.log(Row.num_rows(row96));
+var a = new Array(Row.num_rows(row_full));
+
+
+
+
+
+
+

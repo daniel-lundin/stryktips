@@ -56,7 +56,7 @@ def parse_utdelning(lines):
     for i, line in enumerate(lines):
         pengar = 0
         try:
-            pengar = int(line[9:23].replace(".", ""))
+            pengar = int(line[9:24].replace(".", ""))
         except:
             pass
         utdelning.append((13 - i, pengar))
@@ -75,6 +75,26 @@ def parse_svttext(html):
     # Parse utdelning
     return rows, parse_utdelning(lines[15:19])
 
+
+
+def mock_row():
+    rows = [
+        Row(1, 'Lag ett', 'Lag tva', 1, 2),
+        Row(2, 'Lag ett', 'Lag tva', 1, 2),
+        Row(3, 'Lag ett', 'Lag tva', 1, 2),
+        Row(4, 'Lag ett', 'Lag tva', 1, 2),
+        Row(5, 'Lag ett', 'Lag tva', 1, 2),
+        Row(6, 'Lag ett', 'Lag tva', 1, 2),
+        Row(7, 'Lag ett', 'Lag tva', 1, 2),
+        Row(8, 'Lag ett', 'Lag tva', 1, 2),
+        Row(9, 'Lag ett', 'Lag tva', 1, 2),
+        Row(10, 'Lag ett', 'Lag tva', 1, 2),
+        Row(11, 'Lag ett', 'Lag tva', 1, 2),
+        Row(12, 'Lag ett', 'Lag tva', 1, 2),
+        Row(13, 'Lag ett', 'Lag tva', 1, 2),
+    ];
+    utdelning = ((13, 0), (12, 0), (11, 0), (10, 0))
+    return utdelning, rows
 
 if __name__ == '__main__':
 
