@@ -131,7 +131,7 @@
           <h2>Utdelning</h2>
           <ul>
             <li ng-repeat="i in [13, 12 ,11, 10]">
-              {{i}} rätt: {{utdelning[i]}} kr
+              {{i}} rätt: {{utdelning[i] | currency:" "}} kr
             </li>
             <span class="strong">Total vinst: {{winnings}} kr</span>
           </ul>
