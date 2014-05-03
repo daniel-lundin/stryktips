@@ -44,11 +44,17 @@ def parse_game(line):
     if len(line.rstrip()) > 30:
         home_score = line[HOME_SCORE_START:HOME_SCORE_START + 1]
         away_score = line[AWAY_SCORE_START:AWAY_SCORE_START + 1]
+    try:
+        home_score = int(home_score)
+        away_score = int(away_score)
+    except:
+        home_score = 0
+        away_score = 0
     return Row(game_no,
-               home_team.rstrip(),
-               away_team.rstrip(),
-               int(home_score),
-               int(away_score))
+            home_team.rstrip(),
+            away_team.rstrip(),
+            home_score,
+            away_score)
 
 
 def parse_utdelning(lines):
@@ -76,7 +82,6 @@ def parse_svttext(html):
     return rows, parse_utdelning(lines[15:19])
 
 
-
 def mock_row():
     rows = [
         Row(1, 'Lag ett', 'Lag tva', 1, 2),
@@ -92,7 +97,7 @@ def mock_row():
         Row(11, 'Lag ett', 'Lag tva', 1, 2),
         Row(12, 'Lag ett', 'Lag tva', 1, 2),
         Row(13, 'Lag ett', 'Lag tva', 1, 2),
-    ];
+    ]
     utdelning = ((13, 0), (12, 0), (11, 0), (10, 0))
     return utdelning, rows
 
