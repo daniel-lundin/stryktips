@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
-import os
+import re
 
 
 Row = namedtuple('Row', 'game_no home_team away_team \
@@ -41,20 +41,17 @@ def parse_game(line):
     away_team = line[AWAY_TEAM_START:AWAY_TEAM_END]
     home_score = 0
     away_score = 0
-    if len(line.rstrip()) > 30:
-        home_score = line[HOME_SCORE_START:HOME_SCORE_START + 1]
-        away_score = line[AWAY_SCORE_START:AWAY_SCORE_START + 1]
-    try:
-        home_score = int(home_score)
-        away_score = int(away_score)
-    except:
-        home_score = 0
-        away_score = 0
+
+    m = re.search('(\d)-(\d)', line)
+    if m:
+        home_score = m.group(1)
+        away_score = m.group(2)
+
     return Row(game_no,
-            home_team.rstrip(),
-            away_team.rstrip(),
-            home_score,
-            away_score)
+               home_team.rstrip(),
+               away_team.rstrip(),
+               home_score,
+               away_score)
 
 
 def parse_utdelning(lines):
@@ -103,10 +100,14 @@ def mock_row():
 
 if __name__ == '__main__':
 
-    for fname in os.listdir("fixtures/allday"):
-        with open("fixtures/allday/%s" % fname) as f:
-            html = f.read()
-            parse_svttext(html)
+    with open("fixtures/onelate.html") as f:
+        html = f.read()
+        print parse_svttext(html)
+
+    #for fname in os.listdir("fixtures/allday"):
+    #    with open("fixtures/allday/%s" % fname) as f:
+    #        html = f.read()
+    #        parse_svttext(html)
 #    html = read_fixture()
 #
 #    parse2(html)
