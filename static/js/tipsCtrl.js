@@ -12,6 +12,7 @@ var tipsController = function ($scope, $http) {
 
   $scope.rows = [ $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT ]; 
   $scope.winnings = 0;
+  $scope.updated_games = [];
 
   $scope.toggle_row = function(index, value) {
     if($scope.rows[index] & value)
@@ -79,13 +80,8 @@ var tipsController = function ($scope, $http) {
     }
     correct_rows.reverse();
     $scope.correct_rows = correct_rows;
-    console.log('correct rows: ' + correct_rows);
-    console.log('utdelning: ' + $scope.utdelning);
     var winnings = 0;
     for(i=10;i<14;++i) {
-      console.log('i is ' + i);
-      console.log('correct_rows: ' + $scope.correct_rows[13-i]);
-      console.log('utdelning: '  + $scope.utdelning[i]);
       winnings += $scope.correct_rows[13-i] * $scope.utdelning[i];
     }
     $scope.winnings = winnings;
@@ -94,26 +90,6 @@ var tipsController = function ($scope, $http) {
 
   $scope.correct = function(index) {
     return $scope.results[index] & $scope.rows[index];
-  };
-
-
-
-  $scope.save = function() {
-    window.localStorage.clear();
-    window.localStorage.setItem('rows', $scope.rows);
-    window.localStorage.setItem('results', $scope.results);
-  };
-
-  $scope.load = function() {
-
-    $scope.rows = [];
-    window.localStorage.getItem('rows').split(",").map(function(a) {
-      $scope.rows.push(parseInt(a, 10));
-    });
-    $scope.results = [];
-    window.localStorage.getItem('results').split(",").map(function(a) {
-      $scope.results.push(parseInt(a, 10));
-    });
   };
 
   var update_hash = function() {
@@ -126,41 +102,66 @@ var tipsController = function ($scope, $http) {
 
   var read_from_hash = function() {
     var hash = document.location.hash;
-    console.log(hash);
-    console.log(hash.length);
     if(hash.length == 14) {
       for(var i in document.location.hash) {
         if(i == 0)
           continue;
         $scope.rows[i-1] = parseInt(document.location.hash[i]);
       }
-      console.log('it is 13');
     }
   };
 
+  $scope.game_updated = function(game_idx) {
+    for(var i=0;i<$scope.updated_games.length;++i) {
+      if(game_idx == $scope.updated_games[i]) {
+        return true;
+      }
+    }
+    return false;
+  };
+  function modified_games(new_results) {
+    var modified = [];
+    for(var i=0;i<$scope.results.length;++i) {
+      if($scope.team_scores[i] != new_results.team_scores[i]) {
+        modified.push(i);
+      }
+    }
+    return modified;
+  }
+
   function update_results() {
     $http.get('/results.json').success(function(data) {
-      $scope.team_names = [];
-      $scope.team_scores = [];
-      $scope.results = [];
+      var new_results = {};
+      new_results.team_names = [];
+      new_results.team_scores = [];
+      new_results.results = [];
       for(var i in data.rows) {
-        $scope.team_names.push(data.rows[i].home_team + '-' + data.rows[i].away_team);
-        $scope.team_scores.push(data.rows[i].home_score + '-' + data.rows[i].away_score);
-        var result = $scope.KRYSS;
+        new_results.team_names.push(data.rows[i].home_team + '-' + data.rows[i].away_team);
+        new_results.team_scores.push(data.rows[i].home_score + '-' + data.rows[i].away_score);
+        var result = new_results.KRYSS;
         if(data.rows[i].home_score > data.rows[i].away_score) {
-          result = $scope.ETT;
+          result = new_results.ETT;
         } else if(data.rows[i].home_score < data.rows[i].away_score) {
-          result = $scope.TVA;
+          result = new_results.TVA;
         }
-        $scope.results.push(result);
+        new_results.results.push(result);
       }
-      console.log('data.utdelning: ' + data.utdelning);
-      $scope.utdelning = data.utdelning;
-      console.log('scope.utdelning[10]: ' + $scope.utdelning[10]);
-      console.log('scope.utdelning[11]: ' + $scope.utdelning[11]);
-      console.log('scope.utdelning[12]: ' + $scope.utdelning[12]);
-      console.log('scope.utdelning[13]: ' + $scope.utdelning[13]);
-      calculate_correct_rows();
+
+      var modified = modified_games(new_results);
+      if(modified.length > 0) {
+        console.log('games changed');
+        console.log(modified);
+        $scope.updated_games = modified;
+        console.log('games changed');
+        $scope.utdelning = data.utdelning;
+        $scope.team_names = new_results.team_names;
+        $scope.team_scores = new_results.team_scores;
+        $scope.results = new_results.results;
+        calculate_correct_rows();
+      } else {
+        console.log('nothing changed');
+      }
+
     });
   }
 
