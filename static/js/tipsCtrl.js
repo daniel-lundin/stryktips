@@ -12,7 +12,22 @@ var tipsController = function ($scope, $http) {
 
   $scope.rows = [ $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT ]; 
   $scope.winnings = 0;
-  $scope.updated_games = [];
+  $scope.UPDATE_BLINK_TIME_MS = 60*1000;
+  $scope.last_game_updates = [
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+    Date.now() - $scope.UPDATE_BLINK_TIME_MS,
+  ];
 
   $scope.toggle_row = function(index, value) {
     if($scope.rows[index] & value)
@@ -111,23 +126,17 @@ var tipsController = function ($scope, $http) {
     }
   };
 
-  $scope.game_updated = function(game_idx) {
-    for(var i=0;i<$scope.updated_games.length;++i) {
-      if(game_idx == $scope.updated_games[i]) {
-        return true;
-      }
-    }
-    return false;
+  $scope.result_updated = function(i) {
+    return Date.now() < ($scope.last_game_updates[i] + $scope.UPDATE_BLINK_TIME_MS);
   };
-  function modified_games(new_results) {
-    var modified = [];
+
+  $scope.update_game_updates = function (new_results) {
     for(var i=0;i<$scope.results.length;++i) {
       if($scope.team_scores[i] != new_results.team_scores[i]) {
-        modified.push(i);
+        $scope.last_game_updates[i] = Date.now();
       }
     }
-    return modified;
-  }
+  };
 
   function update_results() {
     $http.get('/results.json').success(function(data) {
@@ -138,35 +147,26 @@ var tipsController = function ($scope, $http) {
       for(var i in data.rows) {
         new_results.team_names.push(data.rows[i].home_team + '-' + data.rows[i].away_team);
         new_results.team_scores.push(data.rows[i].home_score + '-' + data.rows[i].away_score);
-        var result = new_results.KRYSS;
+        var result = $scope.KRYSS;
         if(data.rows[i].home_score > data.rows[i].away_score) {
-          result = new_results.ETT;
+          result = $scope.ETT;
         } else if(data.rows[i].home_score < data.rows[i].away_score) {
-          result = new_results.TVA;
+          result = $scope.TVA;
         }
         new_results.results.push(result);
       }
 
-      var modified = modified_games(new_results);
-      if(modified.length > 0) {
-        console.log('games changed');
-        console.log(modified);
-        $scope.updated_games = modified;
-        console.log('games changed');
-        $scope.utdelning = data.utdelning;
-        $scope.team_names = new_results.team_names;
-        $scope.team_scores = new_results.team_scores;
-        $scope.results = new_results.results;
-        calculate_correct_rows();
-      } else {
-        console.log('nothing changed');
-      }
-
+      $scope.update_game_updates(new_results);
+      $scope.utdelning = data.utdelning;
+      $scope.team_names = new_results.team_names;
+      $scope.team_scores = new_results.team_scores;
+      $scope.results = new_results.results;
+      calculate_correct_rows();
     });
   }
 
   update_results();
   read_from_hash();
   setInterval(update_results, 5000);
-
 };
+

@@ -106,7 +106,7 @@
           <th colspan="3"></th>
           <th colspan="3">Din rad<th>
         </tr>
-        <tr ng-repeat="i in [0,1,2,3,4,5,6,7,8,9,10,11,12]" ng-class="{updated: game_updated(i)}">
+        <tr ng-repeat="i in [0,1,2,3,4,5,6,7,8,9,10,11,12]" ng-class="{updated: result_updated(i)}">
           <th class="filled">{{i+1}}.</th>
           <td class="filled">{{team_names[i]}}</td>
           <td class="score filled">{{team_scores[i]}}</td>
