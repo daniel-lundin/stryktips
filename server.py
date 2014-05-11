@@ -19,6 +19,8 @@ class ResultsHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         def response_handler(response):
+            if response.error:
+                response.rethrow()
             rows, utdelning = parse_svttext(response.body)
             res = {'rows': [], 'utdelning': {}}
             for row in rows:

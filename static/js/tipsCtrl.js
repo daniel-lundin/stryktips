@@ -166,7 +166,11 @@ var tipsController = function ($scope, $http) {
       calculate_correct_rows();
       setTimeout(function() {
         update_results(false);
-      }, 5000);
+      }, 2000);
+    }).error(function(data, status) {
+      console.log("ERROR: ");
+      console.log(data);
+      console.log(status);
     });
   }
 
