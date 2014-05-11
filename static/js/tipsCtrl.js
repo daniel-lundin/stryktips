@@ -12,7 +12,8 @@ var tipsController = function ($scope, $http) {
 
   $scope.rows = [ $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT, $scope.ETT ]; 
   $scope.winnings = 0;
-  $scope.UPDATE_BLINK_TIME_MS = 60*1000;
+
+  $scope.UPDATE_BLINK_TIME_MS = 30*1000;
   $scope.last_game_updates = [
     Date.now() - $scope.UPDATE_BLINK_TIME_MS,
     Date.now() - $scope.UPDATE_BLINK_TIME_MS,
@@ -138,7 +139,7 @@ var tipsController = function ($scope, $http) {
     }
   };
 
-  function update_results() {
+  function update_results(is_first_time) {
     $http.get('/results.json').success(function(data) {
       var new_results = {};
       new_results.team_names = [];
@@ -156,17 +157,21 @@ var tipsController = function ($scope, $http) {
         new_results.results.push(result);
       }
 
-      $scope.update_game_updates(new_results);
+      if(!is_first_time)
+        $scope.update_game_updates(new_results);
       $scope.utdelning = data.utdelning;
       $scope.team_names = new_results.team_names;
       $scope.team_scores = new_results.team_scores;
       $scope.results = new_results.results;
       calculate_correct_rows();
+      setTimeout(function() {
+        update_results(false);
+      }, 5000);
     });
   }
 
-  update_results();
+  update_results(true);
   read_from_hash();
-  setInterval(update_results, 5000);
+  //setInterval(function() { update_results(false); }, 5000);
 };
 
